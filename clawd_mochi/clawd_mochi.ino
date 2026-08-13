@@ -104,7 +104,9 @@ bool     backlightOn     = true;
 uint8_t  animSpeed       = 1;   // 1=slow(default) 2=normal 3=fast
 
 // ── Mochi Mood ────────────────────────────────────────────────
-String        lastMoodShown      = "";     // 上一次实际播放过的mood，避免同一情绪反复重播
+String        lastMoodMessageId  = "";     // 上一次实际播放过表情所对应的消息id，
+                                            // 用来判断"是不是同一条消息在轮询"而不是"mood标签变没变"——
+                                            // 连续两条回复即使情绪标签相同，也应该各自触发一次表情
 unsigned long moodPollIntervalMs = 15000;  // 由后端 poll_interval 字段动态更新
 
 uint16_t animBgColor  = 0;   // background for eye/logo animations
@@ -843,7 +845,9 @@ void playMoodFace(const String& mood) {
 
 // 轮询mu-backend的mood接口。poll_interval由后端决定下一次轮询间隔，
 // active=true时紧跟聊天节奏(3s)，false时降频(15-20s)。
-// 只有mood相较上次实际变化了才播放新表情，避免同一情绪反复重播刷屏。
+// 只有message_id相较上次实际变化了才播放新表情（同一条消息在3秒间隔内被
+// 反复轮询到时不重播），跟mood标签本身是否相同无关——连续两条回复即使
+// 情绪标签都是happy，也应该各自触发一次表情。
 void pollMochiMood() {
   if (WiFi.status() != WL_CONNECTED) {
     Serial.println("[mood] skip poll: WiFi not connected");
@@ -879,22 +883,30 @@ void pollMochiMood() {
       int pollIntervalSec = doc["poll_interval"] | 15;
       moodPollIntervalMs  = (unsigned long)pollIntervalSec * 1000UL;
 
+      String messageId = "";
+      if (!doc["message_id"].isNull()) messageId = doc["message_id"].as<String>();
+
       Serial.print("[mood] mood=");
       Serial.print(mood);
       Serial.print(" poll_interval=");
       Serial.print(pollIntervalSec);
-      Serial.print("s lastMoodShown=");
-      Serial.println(lastMoodShown);
+      Serial.print("s message_id=");
+      Serial.print(messageId);
+      Serial.print(" lastMoodMessageId=");
+      Serial.println(lastMoodMessageId);
 
-      if (mood.length() > 0 && mood != lastMoodShown &&
+      // 用message_id而不是mood字符串来判断"有没有新回复"：连续两条回复即使
+      // 情绪标签相同（都是happy），也应该各自触发一次表情，而不是只在mood
+      // 第一次出现时播放一次。
+      if (mood.length() > 0 && messageId.length() > 0 && messageId != lastMoodMessageId &&
           !busy && !termMode && currentView == VIEW_EYES_NORMAL) {
-        Serial.println("[mood] mood changed, playing face");
+        Serial.println("[mood] new reply, playing face");
         playMoodFace(mood);
-        lastMoodShown = mood;
-      } else if (mood.length() > 0 && mood == lastMoodShown) {
-        Serial.println("[mood] mood unchanged, skip face");
+        lastMoodMessageId = messageId;
+      } else if (mood.length() > 0 && messageId == lastMoodMessageId) {
+        Serial.println("[mood] same reply as last poll, skip face");
       } else if (mood.length() > 0) {
-        Serial.println("[mood] mood changed but busy/termMode/view blocks face change");
+        Serial.println("[mood] new reply but busy/termMode/view blocks face change");
       }
     }
   } else {
