@@ -48,6 +48,9 @@ Adafruit_ST7789 tft = Adafruit_ST7789(TFT_CS, TFT_DC, TFT_RST);
 #define AP_IP            "192.168.4.1"
 #define CONNECT_TIMEOUT  15000   // WiFi连接超时15秒
 
+// ── Mochi Mood (mu-backend) ──────────────────────────────────
+const char* MOOD_API_URL = "https://mu-backend-l0uw.onrender.com/api/mochi/mood";
+
 Preferences preferences;
 
 // 配置存储字段
@@ -99,6 +102,10 @@ uint8_t  prevView        = VIEW_EYES_NORMAL;  // 用于提醒结束后返回
 bool     busy            = false;
 bool     backlightOn     = true;
 uint8_t  animSpeed       = 1;   // 1=slow(default) 2=normal 3=fast
+
+// ── Mochi Mood ────────────────────────────────────────────────
+String        lastMoodShown      = "";     // 上一次实际播放过的mood，避免同一情绪反复重播
+unsigned long moodPollIntervalMs = 15000;  // 由后端 poll_interval 字段动态更新
 
 uint16_t animBgColor  = 0;   // background for eye/logo animations
 uint16_t drawBgColor  = 0;   // background for canvas
@@ -799,6 +806,102 @@ void animLogoReveal() {
   drawLogoFilled(animBgColor, C_WHITE);
   delay(1500);
   busy = false;
+}
+
+// ═════════════════════════════════════════════════════════════
+//  MOCHI MOOD (mu-backend /api/mochi/mood 轮询)
+// ═════════════════════════════════════════════════════════════
+
+// mood → 表情映射。多个候选时随机挑一个增加变化。
+// sad 暂用 wuyu、worried 暂用 gantanhao 顶替，等新表情画好后再替换。
+void playMoodFace(const String& mood) {
+  currentView = VIEW_EYES_NORMAL;
+
+  if (mood == "happy") {
+    if (random(2) == 0) { anim_smile(); }
+    else { busy = true; drawFace_yes(); busy = false; }
+  } else if (mood == "loving") {
+    anim_hart();
+  } else if (mood == "tired") {
+    anim_zzz();
+  } else if (mood == "playful") {
+    if (random(2) == 0) { anim_jiyanjing(); }
+    else { busy = true; drawFace_glass(); busy = false; }
+  } else if (mood == "calm") {
+    anim_close();
+  } else if (mood == "curious") {
+    anim_look();
+  } else if (mood == "confused") {
+    if (random(2) == 0) { busy = true; drawFace_wenhao(); busy = false; }
+    else { anim_yun(); }
+  } else if (mood == "worried") {
+    busy = true; drawFace_gantanhao(); busy = false;
+  } else if (mood == "sad") {
+    busy = true; drawFace_wuyu(); busy = false;
+  }
+}
+
+// 轮询mu-backend的mood接口。poll_interval由后端决定下一次轮询间隔，
+// active=true时紧跟聊天节奏(3s)，false时降频(15-20s)。
+// 只有mood相较上次实际变化了才播放新表情，避免同一情绪反复重播刷屏。
+void pollMochiMood() {
+  if (WiFi.status() != WL_CONNECTED) {
+    Serial.println("[mood] skip poll: WiFi not connected");
+    return;
+  }
+
+  Serial.print("[mood] polling ");
+  Serial.println(MOOD_API_URL);
+
+  WiFiClientSecure client;
+  client.setInsecure();  // 不校验证书，简化实现
+  HTTPClient http;
+  http.begin(client, MOOD_API_URL);
+  http.setTimeout(5000);
+  int httpCode = http.GET();
+
+  Serial.print("[mood] HTTP code: ");
+  Serial.println(httpCode);
+
+  if (httpCode == HTTP_CODE_OK) {
+    String payload = http.getString();
+    Serial.print("[mood] payload: ");
+    Serial.println(payload);
+
+    JsonDocument doc;
+    DeserializationError error = deserializeJson(doc, payload);
+
+    if (error) {
+      Serial.print("[mood] JSON parse error: ");
+      Serial.println(error.c_str());
+    } else {
+      String mood         = doc["mood"] | "";
+      int pollIntervalSec = doc["poll_interval"] | 15;
+      moodPollIntervalMs  = (unsigned long)pollIntervalSec * 1000UL;
+
+      Serial.print("[mood] mood=");
+      Serial.print(mood);
+      Serial.print(" poll_interval=");
+      Serial.print(pollIntervalSec);
+      Serial.print("s lastMoodShown=");
+      Serial.println(lastMoodShown);
+
+      if (mood.length() > 0 && mood != lastMoodShown &&
+          !busy && !termMode && currentView == VIEW_EYES_NORMAL) {
+        Serial.println("[mood] mood changed, playing face");
+        playMoodFace(mood);
+        lastMoodShown = mood;
+      } else if (mood.length() > 0 && mood == lastMoodShown) {
+        Serial.println("[mood] mood unchanged, skip face");
+      } else if (mood.length() > 0) {
+        Serial.println("[mood] mood changed but busy/termMode/view blocks face change");
+      }
+    }
+  } else {
+    Serial.print("[mood] HTTP error: ");
+    Serial.println(http.errorToString(httpCode));
+  }
+  http.end();
 }
 
 // ═════════════════════════════════════════════════════════════
@@ -2429,5 +2532,31 @@ void loop() {
       lastMinuteCheck = now;
       checkReminders();
     }
+  }
+
+  // ── Mochi情绪轮询：间隔由后端 poll_interval 动态控制 ──────────
+  static unsigned long lastMoodPoll = 0;
+  unsigned long moodElapsed = now - lastMoodPoll;
+  bool moodDue = moodElapsed >= moodPollIntervalMs;
+
+  // [DEBUG-TEMP] 每1秒打印一次，跟这次判断对齐，方便确认走到没走到这里、
+  // 判断条件的具体数值、走了true还是false分支。测通后可以删掉这一段。
+  static unsigned long lastMoodDebugLog = 0;
+  if (now - lastMoodDebugLog >= 1000) {
+    lastMoodDebugLog = now;
+    Serial.println("[debug] loop() alive");
+    Serial.print("[debug] now="); Serial.println(now);
+    Serial.print("[debug] WiFi.status()="); Serial.print(WiFi.status());
+    Serial.println(WiFi.status() == WL_CONNECTED ? " (WL_CONNECTED)" : " (NOT WL_CONNECTED)");
+    Serial.print("[debug][mood-timer] lastMoodPoll="); Serial.print(lastMoodPoll);
+    Serial.print(" elapsed="); Serial.print(moodElapsed);
+    Serial.print(" moodPollIntervalMs="); Serial.print(moodPollIntervalMs);
+    Serial.print(" moodDue="); Serial.println(moodDue ? "true" : "false");
+  }
+
+  if (moodDue) {
+    Serial.println("[debug][mood-timer] condition TRUE -> calling pollMochiMood()");
+    lastMoodPoll = now;
+    pollMochiMood();
   }
 }
