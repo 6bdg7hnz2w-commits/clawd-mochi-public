@@ -75,9 +75,9 @@ Clawd Mochi sits on your desk and shows animated expressions on a small color di
 | SDA         | GPIO 10 (MOSI) | Orange                 |
 | SCL         | GPIO 8 (SCK)   | Green                  |
 | RES         | GPIO 2         | Purple                 |
-| DC          | GPIO 1         | Blue                   |
+| DC          | GPIO 3         | Blue                   |
 | CS          | GPIO 4         | White                  |
-| BL          | GPIO 3         | Yellow                 |
+| BL          | GPIO 5         | Yellow                 |
 
 ---
 
@@ -150,7 +150,7 @@ Go to **Tools** and set:
 4. 确认后设备清除配置并重启，进入配网模式
 
 **方式二：GPIO重置（开发者功能）**
-- 启动时将 **GPIO 5** 拉低（接地），可清除WiFi配置重新配网
+- 启动时将 **GPIO 1** 拉低（接地），可清除WiFi配置重新配网
 
 ---
 

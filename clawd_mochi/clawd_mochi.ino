@@ -7,13 +7,13 @@
  *     SDA → GPIO 10  (hardware SPI MOSI)
  *     SCL → GPIO 8   (hardware SPI SCK)
  *     RST → GPIO 2
- *     DC  → GPIO 1
+ *     DC  → GPIO 3
  *     CS  → GPIO 4
- *     BL  → GPIO 3
+ *     BL  → GPIO 5
  *     VCC → 3V3
  *     GND → GND
  *
- *   重置配网引脚: GPIO 5 (启动时拉低可清除WiFi配置重新配网)
+ *   重置配网引脚: GPIO 1 (启动时拉低可清除WiFi配置重新配网)
  *
  *   WiFi配网流程:
  *     首次启动 → AP模式(Clawd-Mochi-Setup, 192.168.4.1)
@@ -28,6 +28,7 @@
 #include <math.h>
 #include <WiFi.h>
 #include <WebServer.h>
+#include <DNSServer.h>
 #include <HTTPClient.h>
 #include <ArduinoJson.h>
 #include <WiFiClientSecure.h>
@@ -35,14 +36,14 @@
 
 // ── Pins ──────────────────────────────────────────────────────
 #define TFT_CS  4
-#define TFT_DC  1
+#define TFT_DC  3
 #define TFT_RST 2
-#define TFT_BLK 3
+#define TFT_BLK 5
 
 Adafruit_ST7789 tft = Adafruit_ST7789(TFT_CS, TFT_DC, TFT_RST);
 
 // ── WiFi配网系统 ──────────────────────────────────────────────────────────────
-#define RESET_PIN        5    // 重置配网引脚（启动时拉低清除配置）
+#define RESET_PIN        1    // 重置配网引脚（启动时拉低清除配置）
 #define AP_NAME          "Clawd-Mochi-Setup"
 #define AP_IP            "192.168.4.1"
 #define CONNECT_TIMEOUT  15000   // WiFi连接超时15秒
@@ -66,6 +67,8 @@ bool wifiConnected = false;  // WiFi连接成功标志
 
 WebServer server(80);
 WebServer* setupServer = nullptr;  // 配网专用服务器
+DNSServer dnsServer;                // 配网模式下的强制门户DNS
+const byte DNS_PORT = 53;
 
 // ── Display ───────────────────────────────────────────────────
 #define DISP_W 240
@@ -1037,6 +1040,16 @@ void setupRouteSave() {
   ESP.restart();
 }
 
+// 强制门户：把所有未知路径/域名请求都重定向到配网首页
+// iOS/Android/Windows连上开放热点后会自动探测该域名下的固定路径，
+// 只要响应不是它们期望的"联网正常"内容，系统就会弹出登录页(CNA)加载跳转目标
+void setupRouteCaptive() {
+  if (!setupServer) return;
+  setupServer->sendHeader("Location", String("http://") + WiFi.softAPIP().toString() + "/", true);
+  setupServer->send(302, "text/plain", "");
+  setupServer->client().stop();
+}
+
 // 启动配网模式
 void startSetupMode() {
   inSetupMode = true;
@@ -1067,22 +1080,50 @@ void startSetupMode() {
   Serial.println(String("AP started: ") + AP_NAME);
   Serial.println(String("AP IP: ") + WiFi.softAPIP().toString());
 
+  // 启动DNS服务器：把任意域名解析都指向AP自己的IP，
+  // 这样手机发出的探测请求（不管访问的是什么域名）都会落到下面这个HTTP服务器上
+  dnsServer.start(DNS_PORT, "*", apIP);
+
   // 创建配网服务器
   setupServer = new WebServer(80);
   setupServer->on("/",        HTTP_GET, setupRouteRoot);
   setupServer->on("/scan",    HTTP_GET, setupRouteScan);
   setupServer->on("/save",    HTTP_GET, setupRouteSave);
+  // 各平台的强制门户探测路径，命中即重定向到配网首页
+  setupServer->on("/hotspot-detect.html",       HTTP_GET, setupRouteCaptive); // iOS/macOS
+  setupServer->on("/library/test/success.html", HTTP_GET, setupRouteCaptive); // 旧版iOS
+  setupServer->on("/generate_204",              HTTP_GET, setupRouteCaptive); // Android
+  setupServer->on("/gen_204",                   HTTP_GET, setupRouteCaptive); // Android
+  setupServer->on("/ncsi.txt",                  HTTP_GET, setupRouteCaptive); // Windows
+  setupServer->on("/connecttest.txt",           HTTP_GET, setupRouteCaptive); // Windows
+  setupServer->onNotFound(setupRouteCaptive);    // 其余一切未知路径/域名，兜底重定向
   setupServer->begin();
 
-  Serial.println("Setup server started");
+  Serial.println("Setup server started (captive portal)");
 }
 
 // 处理配网模式循环
 void handleSetupLoop() {
+  dnsServer.processNextRequest();
   if (setupServer) setupServer->handleClient();
 }
 
 // 尝试连接WiFi（Station模式）
+// 把 WiFi.status() 的返回值翻译成人能看懂的含义，方便定位连接失败的具体原因
+const char* wifiStatusDesc(wl_status_t status) {
+  switch (status) {
+    case WL_IDLE_STATUS:     return "IDLE - 尚未开始连接/正在切换状态";
+    case WL_NO_SSID_AVAIL:   return "NO_SSID_AVAIL - 找不到该SSID（信号弱/名称错/AP未开启）";
+    case WL_SCAN_COMPLETED:  return "SCAN_COMPLETED - 扫描已完成，尚未发起连接";
+    case WL_CONNECTED:       return "CONNECTED - 已连接";
+    case WL_CONNECT_FAILED:  return "CONNECT_FAILED - 连接失败（常见于密码错误/认证被拒）";
+    case WL_CONNECTION_LOST: return "CONNECTION_LOST - 连接建立后又丢失";
+    case WL_DISCONNECTED:    return "DISCONNECTED - 未连接/已断开";
+    case WL_NO_SHIELD:       return "NO_SHIELD - 未检测到WiFi硬件";
+    default:                 return "UNKNOWN - 未知状态码";
+  }
+}
+
 bool tryConnectWiFi() {
   if (cfgSSID.length() == 0) return false;
 
@@ -1093,7 +1134,10 @@ bool tryConnectWiFi() {
   unsigned long start = millis();
   while (WiFi.status() != WL_CONNECTED) {
     if (millis() - start > CONNECT_TIMEOUT) {
+      wl_status_t st = WiFi.status();
+      Serial.println();
       Serial.println("WiFi connection timeout");
+      Serial.println(String("  WiFi.status() = ") + (int)st + " -> " + wifiStatusDesc(st));
       return false;
     }
     delay(500);
@@ -1124,7 +1168,7 @@ void showConnectFailedScreen() {
   tft.print(cfgSSID);
   tft.setTextColor(C_MUTED); tft.setTextSize(1);
   tft.setCursor(12, 80); tft.print("Check password or reset");
-  tft.setCursor(12, 96); tft.print("Pull GPIO5 LOW at startup");
+  tft.setCursor(12, 96); tft.print("Pull GPIO1 LOW at startup");
   tft.setTextColor(C_ORANGE); tft.setTextSize(2);
   tft.setCursor(DISP_W/2 - 50, 120); tft.print("Retrying...");
 }
@@ -2251,7 +2295,7 @@ void setup() {
   // ── Logo shown once at startup ─────────────────────────────
   animLogoReveal();
 
-  // ── 检测重置引脚（GPIO5拉低清除配置）──────────────────────
+  // ── 检测重置引脚（GPIO1拉低清除配置）──────────────────────
   if (digitalRead(RESET_PIN) == LOW) {
     Serial.println("Reset pin LOW - clearing config");
     clearConfig();
@@ -2264,8 +2308,16 @@ void setup() {
     tft.setCursor(DISP_W/2 - 70, DISP_H/2 + 10);
     tft.print("Release reset pin...");
     delay(2000);
-    // 等待引脚释放
-    while (digitalRead(RESET_PIN) == LOW) delay(100);
+    // 等待引脚释放，最多等5秒；引脚被卡死在低电平（接线故障/按键卡住）也不会永久阻塞在这里，
+    // 配置已经清空，超时后直接继续往下走同样会进入AP配网模式
+    unsigned long releaseWaitStart = millis();
+    while (digitalRead(RESET_PIN) == LOW) {
+      if (millis() - releaseWaitStart > 5000) {
+        Serial.println("Reset pin still LOW after 5s, continuing anyway (check wiring)");
+        break;
+      }
+      delay(100);
+    }
   }
 
   // ── 读取配置 ──────────────────────────────────────────────
