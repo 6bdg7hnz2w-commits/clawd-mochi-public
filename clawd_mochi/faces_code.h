@@ -28,41 +28,6 @@ void drawFace_smile1() {
   tft.fillRect(198, 78, 12, 6, C_BLACK);
 }
 
-// gantanhao
-void drawFace_gantanhao() {
-  tft.fillScreen(animBgColor);
-  tft.fillRect(96, 18, 48, 6, C_BLACK);
-  tft.fillRect(96, 24, 48, 6, C_BLACK);
-  tft.fillRect(96, 30, 48, 6, C_BLACK);
-  tft.fillRect(96, 36, 48, 6, C_BLACK);
-  tft.fillRect(96, 42, 48, 6, C_BLACK);
-  tft.fillRect(96, 48, 48, 6, C_BLACK);
-  tft.fillRect(96, 54, 48, 6, C_BLACK);
-  tft.fillRect(96, 60, 48, 6, C_BLACK);
-  tft.fillRect(96, 66, 48, 6, C_BLACK);
-  tft.fillRect(96, 72, 48, 6, C_BLACK);
-  tft.fillRect(96, 78, 48, 6, C_BLACK);
-  tft.fillRect(96, 84, 48, 6, C_BLACK);
-  tft.fillRect(96, 90, 48, 6, C_BLACK);
-  tft.fillRect(96, 96, 48, 6, C_BLACK);
-  tft.fillRect(96, 102, 48, 6, C_BLACK);
-  tft.fillRect(96, 108, 48, 6, C_BLACK);
-  tft.fillRect(96, 114, 48, 6, C_BLACK);
-  tft.fillRect(96, 120, 48, 6, C_BLACK);
-  tft.fillRect(96, 126, 48, 6, C_BLACK);
-  tft.fillRect(96, 132, 48, 6, C_BLACK);
-  tft.fillRect(96, 138, 48, 6, C_BLACK);
-  tft.fillRect(96, 144, 48, 6, C_BLACK);
-  tft.fillRect(96, 150, 48, 6, C_BLACK);
-  tft.fillRect(96, 174, 48, 6, C_BLACK);
-  tft.fillRect(96, 180, 48, 6, C_BLACK);
-  tft.fillRect(96, 186, 48, 6, C_BLACK);
-  tft.fillRect(96, 192, 48, 6, C_BLACK);
-  tft.fillRect(96, 198, 48, 6, C_BLACK);
-  tft.fillRect(96, 204, 48, 6, C_BLACK);
-  tft.fillRect(96, 210, 48, 6, C_BLACK);
-}
-
 // close1
 void drawFace_close1() {
   tft.fillScreen(animBgColor);
@@ -151,47 +116,6 @@ void drawFace_dead3() {
   tft.fillRect(66, 78, 18, 6, C_BLACK);
   tft.fillRect(30, 84, 18, 6, C_BLACK);
   tft.fillRect(66, 84, 18, 6, C_BLACK);
-}
-
-// X
-void drawFace_X() {
-  tft.fillScreen(animBgColor);
-  tft.fillRect(66, 54, 6, 6, C_BLACK);
-  tft.fillRect(162, 54, 6, 6, C_BLACK);
-  tft.fillRect(60, 60, 18, 6, C_BLACK);
-  tft.fillRect(156, 60, 18, 6, C_BLACK);
-  tft.fillRect(54, 66, 30, 6, C_BLACK);
-  tft.fillRect(150, 66, 30, 6, C_BLACK);
-  tft.fillRect(54, 72, 36, 6, C_BLACK);
-  tft.fillRect(144, 72, 36, 6, C_BLACK);
-  tft.fillRect(60, 78, 36, 6, C_BLACK);
-  tft.fillRect(138, 78, 36, 6, C_BLACK);
-  tft.fillRect(66, 84, 36, 6, C_BLACK);
-  tft.fillRect(132, 84, 36, 6, C_BLACK);
-  tft.fillRect(72, 90, 36, 6, C_BLACK);
-  tft.fillRect(126, 90, 36, 6, C_BLACK);
-  tft.fillRect(78, 96, 36, 6, C_BLACK);
-  tft.fillRect(120, 96, 36, 6, C_BLACK);
-  tft.fillRect(84, 102, 66, 6, C_BLACK);
-  tft.fillRect(90, 108, 54, 6, C_BLACK);
-  tft.fillRect(96, 114, 42, 6, C_BLACK);
-  tft.fillRect(96, 120, 42, 6, C_BLACK);
-  tft.fillRect(90, 126, 54, 6, C_BLACK);
-  tft.fillRect(84, 132, 66, 6, C_BLACK);
-  tft.fillRect(78, 138, 36, 6, C_BLACK);
-  tft.fillRect(120, 138, 36, 6, C_BLACK);
-  tft.fillRect(72, 144, 36, 6, C_BLACK);
-  tft.fillRect(126, 144, 36, 6, C_BLACK);
-  tft.fillRect(66, 150, 36, 6, C_BLACK);
-  tft.fillRect(132, 150, 36, 6, C_BLACK);
-  tft.fillRect(60, 156, 36, 6, C_BLACK);
-  tft.fillRect(138, 156, 36, 6, C_BLACK);
-  tft.fillRect(54, 162, 36, 6, C_BLACK);
-  tft.fillRect(144, 162, 36, 6, C_BLACK);
-  tft.fillRect(60, 168, 24, 6, C_BLACK);
-  tft.fillRect(150, 168, 24, 6, C_BLACK);
-  tft.fillRect(66, 174, 12, 6, C_BLACK);
-  tft.fillRect(156, 174, 12, 6, C_BLACK);
 }
 
 // jiyanjing1
@@ -422,38 +346,6 @@ void drawFace_yun2() {
   tft.fillRect(192, 114, 12, 6, C_BLACK);
 }
 
-// yes
-void drawFace_yes() {
-  tft.fillScreen(animBgColor);
-  tft.fillRect(186, 54, 6, 6, C_BLACK);
-  tft.fillRect(180, 60, 18, 6, C_BLACK);
-  tft.fillRect(174, 66, 30, 6, C_BLACK);
-  tft.fillRect(168, 72, 36, 6, C_BLACK);
-  tft.fillRect(162, 78, 36, 6, C_BLACK);
-  tft.fillRect(156, 84, 36, 6, C_BLACK);
-  tft.fillRect(150, 90, 36, 6, C_BLACK);
-  tft.fillRect(144, 96, 36, 6, C_BLACK);
-  tft.fillRect(138, 102, 36, 6, C_BLACK);
-  tft.fillRect(48, 108, 12, 6, C_BLACK);
-  tft.fillRect(132, 108, 36, 6, C_BLACK);
-  tft.fillRect(42, 114, 24, 6, C_BLACK);
-  tft.fillRect(126, 114, 36, 6, C_BLACK);
-  tft.fillRect(36, 120, 36, 6, C_BLACK);
-  tft.fillRect(120, 120, 36, 6, C_BLACK);
-  tft.fillRect(42, 126, 36, 6, C_BLACK);
-  tft.fillRect(114, 126, 36, 6, C_BLACK);
-  tft.fillRect(48, 132, 36, 6, C_BLACK);
-  tft.fillRect(108, 132, 36, 6, C_BLACK);
-  tft.fillRect(54, 138, 36, 6, C_BLACK);
-  tft.fillRect(102, 138, 36, 6, C_BLACK);
-  tft.fillRect(60, 144, 72, 6, C_BLACK);
-  tft.fillRect(66, 150, 60, 6, C_BLACK);
-  tft.fillRect(72, 156, 48, 6, C_BLACK);
-  tft.fillRect(78, 162, 36, 6, C_BLACK);
-  tft.fillRect(84, 168, 24, 6, C_BLACK);
-  tft.fillRect(90, 174, 12, 6, C_BLACK);
-}
-
 // wenhao
 void drawFace_wenhao() {
   tft.fillScreen(animBgColor);
@@ -642,8 +534,8 @@ void drawFace_dead1() {
   tft.fillRect(192, 78, 18, 6, C_BLACK);
 }
 
-// hart2
-void drawFace_hart2() {
+// heart2
+void drawFace_heart2() {
   tft.fillScreen(animBgColor);
   tft.fillRect(66, 60, 24, 6, C_BLACK);
   tft.fillRect(150, 60, 24, 6, C_BLACK);
@@ -675,8 +567,8 @@ void drawFace_hart2() {
   tft.fillRect(114, 186, 12, 6, C_BLACK);
 }
 
-// hart1
-void drawFace_hart1() {
+// heart1
+void drawFace_heart1() {
   tft.fillScreen(animBgColor);
   tft.fillRect(60, 54, 30, 6, C_BLACK);
   tft.fillRect(150, 54, 30, 6, C_BLACK);
@@ -986,6 +878,229 @@ void drawFace_glass() {
   tft.fillRect(162, 96, 42, 6, C_BLACK);
 }
 
+// sleepy1 — 打瞌睡：闭眼横线 + 小Z
+void drawFace_sleepy1() {
+  tft.fillScreen(animBgColor);
+  // 眼睛：闭眼横线（比睁眼时更细更平），放大成2行
+  tft.fillRect(30, 66, 48, 6, C_BLACK);
+  tft.fillRect(30, 72, 48, 6, C_BLACK);
+  tft.fillRect(162, 66, 48, 6, C_BLACK);
+  tft.fillRect(162, 72, 48, 6, C_BLACK);
+  // 右上角小Z：顶/中/底三行，中间贴右对齐制造对角线感（不能居中，否则看着像"I"）
+  tft.fillRect(192, 18, 24, 6, C_BLACK);
+  tft.fillRect(204, 24, 12, 6, C_BLACK);
+  tft.fillRect(192, 30, 24, 6, C_BLACK);
+}
+
+// sleepy2 — 打瞌睡：闭眼横线 + 大Z（呼吸感，Z变大）
+void drawFace_sleepy2() {
+  tft.fillScreen(animBgColor);
+  // 眼睛：跟sleepy1完全一致，只有Z在变化
+  tft.fillRect(30, 66, 48, 6, C_BLACK);
+  tft.fillRect(30, 72, 48, 6, C_BLACK);
+  tft.fillRect(162, 66, 48, 6, C_BLACK);
+  tft.fillRect(162, 72, 48, 6, C_BLACK);
+  // 右上角大Z：顶/两段对角/底四行，右边对齐（跟小Z共用x=216右边界）
+  tft.fillRect(180, 6, 36, 6, C_BLACK);
+  tft.fillRect(198, 12, 18, 6, C_BLACK);
+  tft.fillRect(180, 18, 18, 6, C_BLACK);
+  tft.fillRect(180, 24, 36, 6, C_BLACK);
+}
+
+// wink1 — 正常睁眼：两只眼都是24×24的正方形色块
+void drawFace_wink1() {
+  tft.fillScreen(animBgColor);
+  tft.fillRect(36, 48, 36, 6, C_BLACK);
+  tft.fillRect(36, 54, 36, 6, C_BLACK);
+  tft.fillRect(36, 60, 36, 6, C_BLACK);
+  tft.fillRect(36, 66, 36, 6, C_BLACK);
+  tft.fillRect(36, 72, 36, 6, C_BLACK);
+  tft.fillRect(36, 78, 36, 6, C_BLACK);
+  tft.fillRect(168, 48, 36, 6, C_BLACK);
+  tft.fillRect(168, 54, 36, 6, C_BLACK);
+  tft.fillRect(168, 60, 36, 6, C_BLACK);
+  tft.fillRect(168, 66, 36, 6, C_BLACK);
+  tft.fillRect(168, 72, 36, 6, C_BLACK);
+  tft.fillRect(168, 78, 36, 6, C_BLACK);
+}
+
+// wink2 — 眨眼：左眼保持睁开（跟wink1一致），右眼收成一条闭眼横线。
+// 横线直接落在正方形最后一行（78-84）的位置，底边跟左眼方块的底边
+// （y=84）严格对齐，不是漂在方块中间或者贴在方块外面。
+void drawFace_wink2() {
+  tft.fillScreen(animBgColor);
+  tft.fillRect(36, 48, 36, 6, C_BLACK);
+  tft.fillRect(36, 54, 36, 6, C_BLACK);
+  tft.fillRect(36, 60, 36, 6, C_BLACK);
+  tft.fillRect(36, 66, 36, 6, C_BLACK);
+  tft.fillRect(36, 72, 36, 6, C_BLACK);
+  tft.fillRect(36, 78, 36, 6, C_BLACK);
+  tft.fillRect(168, 78, 36, 6, C_BLACK);
+}
+
+// curious — 好奇：左眼正常方块，右眼套一个放大镜（六边形镜框+手柄）
+void drawFace_curious() {
+  tft.fillScreen(animBgColor);
+  // 左眼：正常睁眼，36×36方块（跟wink同款画法，放大过）
+  tft.fillRect(36, 48, 36, 6, C_BLACK);
+  tft.fillRect(36, 54, 36, 6, C_BLACK);
+  tft.fillRect(36, 60, 36, 6, C_BLACK);
+  tft.fillRect(36, 66, 36, 6, C_BLACK);
+  tft.fillRect(36, 72, 36, 6, C_BLACK);
+  tft.fillRect(36, 78, 36, 6, C_BLACK);
+  // 右眼：放大镜镜框，六边形近似圆形，中间镂空套住眼睛
+  tft.fillRect(174, 48, 24, 6, C_BLACK);  // 顶盖
+  tft.fillRect(168, 54, 6, 6, C_BLACK);   // 左边
+  tft.fillRect(198, 54, 6, 6, C_BLACK);   // 右边
+  tft.fillRect(168, 60, 6, 6, C_BLACK);
+  tft.fillRect(198, 60, 6, 6, C_BLACK);
+  tft.fillRect(168, 66, 6, 6, C_BLACK);
+  tft.fillRect(198, 66, 6, 6, C_BLACK);
+  tft.fillRect(168, 72, 6, 6, C_BLACK);
+  tft.fillRect(198, 72, 6, 6, C_BLACK);
+  tft.fillRect(174, 78, 24, 6, C_BLACK);  // 底盖
+  // 镜框里的眼睛：比左眼小一圈的方块
+  tft.fillRect(180, 60, 12, 6, C_BLACK);
+  tft.fillRect(180, 66, 12, 6, C_BLACK);
+  // 手柄：从镜框右下角向外斜伸三格，一眼看出是放大镜而不是圆圈/眼镜
+  tft.fillRect(204, 84, 6, 6, C_BLACK);
+  tft.fillRect(210, 90, 6, 6, C_BLACK);
+  tft.fillRect(216, 96, 6, 6, C_BLACK);
+}
+
+// smug — 得意/得瑟：眯眼上扬弧线 + 不对称上扬嘴角
+void drawFace_smug() {
+  tft.fillScreen(animBgColor);
+  // 眼睛：三段阶梯拼出的浅弧线（中间高、两端低），放大过——每段更宽（18px）、
+  // 峰谷落差也拉大到12px，阶梯少（只有3段）过渡缓，视觉上圆润
+  tft.fillRect(24, 72, 18, 6, C_BLACK);
+  tft.fillRect(42, 60, 18, 6, C_BLACK);
+  tft.fillRect(60, 72, 18, 6, C_BLACK);
+  tft.fillRect(162, 72, 18, 6, C_BLACK);
+  tft.fillRect(180, 60, 18, 6, C_BLACK);
+  tft.fillRect(198, 72, 18, 6, C_BLACK);
+  // 嘴：短横线偏左，右端翘起一截，不对称的坏笑感
+  tft.fillRect(90, 108, 24, 6, C_BLACK);
+  tft.fillRect(108, 102, 12, 6, C_BLACK);
+}
+
+// loving — 爱心眼：双眼换成简化心形（两瓣顶+满宽腰身+三角收尾）
+void drawFace_loving() {
+  tft.fillScreen(animBgColor);
+  // 左心
+  tft.fillRect(30, 54, 12, 6, C_BLACK);
+  tft.fillRect(54, 54, 12, 6, C_BLACK);
+  tft.fillRect(30, 60, 36, 6, C_BLACK);
+  tft.fillRect(30, 66, 36, 6, C_BLACK);
+  tft.fillRect(36, 72, 24, 6, C_BLACK);
+  tft.fillRect(42, 78, 12, 6, C_BLACK);
+  // 右心（镜像）
+  tft.fillRect(174, 54, 12, 6, C_BLACK);
+  tft.fillRect(198, 54, 12, 6, C_BLACK);
+  tft.fillRect(174, 60, 36, 6, C_BLACK);
+  tft.fillRect(174, 66, 36, 6, C_BLACK);
+  tft.fillRect(180, 72, 24, 6, C_BLACK);
+  tft.fillRect(186, 78, 12, 6, C_BLACK);
+}
+
+// angry2 — 生气重新设计：眉毛更粗更贴近眼睛，嘴改锯齿波浪线，去掉鼓腮
+void drawFace_angry2() {
+  tft.fillScreen(animBgColor);
+  // 眉毛：每级2行（更粗），只留2级台阶，内侧终点直接接到眼睛顶边(y=66)，
+  // 比之前4级更矮但更粗更低，压迫感更强
+  tft.fillRect(24, 42, 18, 6, C_BLACK);
+  tft.fillRect(24, 48, 18, 6, C_BLACK);
+  tft.fillRect(42, 54, 18, 6, C_BLACK);
+  tft.fillRect(42, 60, 18, 6, C_BLACK);
+  tft.fillRect(198, 42, 18, 6, C_BLACK);
+  tft.fillRect(198, 48, 18, 6, C_BLACK);
+  tft.fillRect(180, 54, 18, 6, C_BLACK);
+  tft.fillRect(180, 60, 18, 6, C_BLACK);
+  // 眼睛：细长横线，眯着；放大成2行（12px），仍比正常睁眼薄很多保留眯眼感
+  tft.fillRect(30, 66, 48, 6, C_BLACK);
+  tft.fillRect(30, 72, 48, 6, C_BLACK);
+  tft.fillRect(162, 66, 48, 6, C_BLACK);
+  tft.fillRect(162, 72, 48, 6, C_BLACK);
+  // 嘴：锯齿波浪线，咬牙切齿；不再画鼓腮方块
+  tft.fillRect(90, 108, 6, 6, C_BLACK);
+  tft.fillRect(96, 114, 6, 6, C_BLACK);
+  tft.fillRect(102, 108, 6, 6, C_BLACK);
+  tft.fillRect(108, 114, 6, 6, C_BLACK);
+  tft.fillRect(114, 108, 6, 6, C_BLACK);
+  tft.fillRect(120, 114, 6, 6, C_BLACK);
+  tft.fillRect(126, 108, 6, 6, C_BLACK);
+  tft.fillRect(132, 114, 6, 6, C_BLACK);
+  tft.fillRect(138, 108, 6, 6, C_BLACK);
+  tft.fillRect(144, 114, 6, 6, C_BLACK);
+}
+
+// sad — 伤心：参考smile1的"盖+腿"构造技法，上下翻转做成下弯弧线（更大更明显），
+// 加左眼角下方一滴眼泪
+void drawFace_sad() {
+  tft.fillScreen(animBgColor);
+  // 眼睛：直接照搬close1的"外侧翘角(高)→内侧收拢(中)→中央桥接(低)"三级构造，
+  // 这个形状本身外角高、中间往下坠，天然就是下弯的轮廓，不需要再反转
+  tft.fillRect(18, 48, 12, 6, C_BLACK);
+  tft.fillRect(84, 48, 12, 6, C_BLACK);
+  tft.fillRect(18, 54, 12, 6, C_BLACK);
+  tft.fillRect(84, 54, 12, 6, C_BLACK);
+  tft.fillRect(30, 60, 12, 6, C_BLACK);
+  tft.fillRect(72, 60, 12, 6, C_BLACK);
+  tft.fillRect(30, 66, 12, 6, C_BLACK);
+  tft.fillRect(72, 66, 12, 6, C_BLACK);
+  tft.fillRect(42, 72, 30, 6, C_BLACK);
+  tft.fillRect(42, 78, 30, 6, C_BLACK);
+  tft.fillRect(144, 48, 12, 6, C_BLACK);
+  tft.fillRect(210, 48, 12, 6, C_BLACK);
+  tft.fillRect(144, 54, 12, 6, C_BLACK);
+  tft.fillRect(210, 54, 12, 6, C_BLACK);
+  tft.fillRect(156, 60, 12, 6, C_BLACK);
+  tft.fillRect(198, 60, 12, 6, C_BLACK);
+  tft.fillRect(156, 66, 12, 6, C_BLACK);
+  tft.fillRect(198, 66, 12, 6, C_BLACK);
+  tft.fillRect(168, 72, 30, 6, C_BLACK);
+  tft.fillRect(168, 78, 30, 6, C_BLACK);
+  // 眼泪：尖头在上，往下逐渐变圆润变宽，挂在左眼中央桥接段的下方
+  tft.fillRect(54, 90, 6, 6, C_BLACK);
+  tft.fillRect(48, 96, 12, 6, C_BLACK);
+  tft.fillRect(48, 102, 12, 6, C_BLACK);
+}
+
+// calm — 平静/愧疚感的细横线眼睛，压得很低（像低头看下面）+ 小小的闭嘴
+void drawFace_calm() {
+  tft.fillScreen(animBgColor);
+  tft.fillRect(30, 96, 48, 6, C_BLACK);
+  tft.fillRect(30, 102, 48, 6, C_BLACK);
+  tft.fillRect(162, 96, 48, 6, C_BLACK);
+  tft.fillRect(162, 102, 48, 6, C_BLACK);
+  tft.fillRect(108, 132, 24, 6, C_BLACK);
+}
+
+// pitiful — 装可怜：比常规大一圈的圆润方块眼睛（带白色高光）+ 小小的委屈嘴
+void drawFace_pitiful() {
+  tft.fillScreen(animBgColor);
+  // 眼睛：36×36，比正常眼睛大一圈（放大过，跟wink/curious的正常眼同尺寸）
+  tft.fillRect(36, 48, 36, 6, C_BLACK);
+  tft.fillRect(36, 54, 36, 6, C_BLACK);
+  tft.fillRect(36, 60, 36, 6, C_BLACK);
+  tft.fillRect(36, 66, 36, 6, C_BLACK);
+  tft.fillRect(36, 72, 36, 6, C_BLACK);
+  tft.fillRect(36, 78, 36, 6, C_BLACK);
+  tft.fillRect(168, 48, 36, 6, C_BLACK);
+  tft.fillRect(168, 54, 36, 6, C_BLACK);
+  tft.fillRect(168, 60, 36, 6, C_BLACK);
+  tft.fillRect(168, 66, 36, 6, C_BLACK);
+  tft.fillRect(168, 72, 36, 6, C_BLACK);
+  tft.fillRect(168, 78, 36, 6, C_BLACK);
+  // 高光：眼睛里的小白点
+  tft.fillRect(42, 54, 6, 6, C_WHITE);
+  tft.fillRect(192, 54, 6, 6, C_WHITE);
+  // 嘴：小小的向下弯，带点委屈感
+  tft.fillRect(102, 108, 6, 6, C_BLACK);
+  tft.fillRect(108, 114, 6, 6, C_BLACK);
+  tft.fillRect(114, 108, 6, 6, C_BLACK);
+}
+
 // ── 动画表情 ──────────────────────────────────────
 
 // 动画：挤眼睛
@@ -1079,15 +1194,15 @@ void anim_look() {
 }
 
 // 动画：心跳
-void anim_hart() {
+void anim_heart() {
   busy = true;
-  drawFace_hart1(); delay(speedMs(180));
-  drawFace_hart2(); delay(speedMs(180));
-  drawFace_hart1(); delay(speedMs(180));
-  drawFace_hart2(); delay(speedMs(180));
-  drawFace_hart1(); delay(speedMs(180));
-  drawFace_hart2(); delay(speedMs(180));
-  drawFace_hart1();
+  drawFace_heart1(); delay(speedMs(180));
+  drawFace_heart2(); delay(speedMs(180));
+  drawFace_heart1(); delay(speedMs(180));
+  drawFace_heart2(); delay(speedMs(180));
+  drawFace_heart1(); delay(speedMs(180));
+  drawFace_heart2(); delay(speedMs(180));
+  drawFace_heart1();
   busy = false;
 }
 
@@ -1106,5 +1221,24 @@ void anim_ganga() {
   drawFace_ganga1(); delay(speedMs(180));
   drawFace_ganga2(); delay(speedMs(180));
   drawFace_ganga3();
+  busy = false;
+}
+
+// 动画：打瞌睡（Z一大一小交替，模拟呼吸感，最后停在小Z）
+void anim_sleepy() {
+  busy = true;
+  drawFace_sleepy1(); delay(speedMs(180));
+  drawFace_sleepy2(); delay(speedMs(180));
+  drawFace_sleepy1(); delay(speedMs(180));
+  drawFace_sleepy2(); delay(speedMs(180));
+  drawFace_sleepy1();
+  busy = false;
+}
+
+// 动画：眨眼（正常睁眼→单眼眨眼，停在眨眼那帧）
+void anim_wink() {
+  busy = true;
+  drawFace_wink1(); delay(speedMs(180));
+  drawFace_wink2();
   busy = false;
 }

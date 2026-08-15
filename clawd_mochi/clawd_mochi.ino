@@ -814,31 +814,44 @@ void animLogoReveal() {
 //  MOCHI MOOD (mu-backend /api/mochi/mood 轮询)
 // ═════════════════════════════════════════════════════════════
 
-// mood → 表情映射。多个候选时随机挑一个增加变化。
-// sad 暂用 wuyu、worried 暂用 gantanhao 顶替，等新表情画好后再替换。
+// mood → 表情映射，11个标签，每个标签的候选表情随机挑一个播放。
 void playMoodFace(const String& mood) {
   currentView = VIEW_EYES_NORMAL;
 
   if (mood == "happy") {
-    if (random(2) == 0) { anim_smile(); }
-    else { busy = true; drawFace_yes(); busy = false; }
-  } else if (mood == "loving") {
-    anim_hart();
-  } else if (mood == "tired") {
-    anim_zzz();
-  } else if (mood == "playful") {
-    if (random(2) == 0) { anim_jiyanjing(); }
+    uint8_t r = random(3);
+    if (r == 0) { anim_smile(); }
+    else if (r == 1) { anim_jiyanjing(); }
     else { busy = true; drawFace_glass(); busy = false; }
+  } else if (mood == "sad") {
+    busy = true; drawFace_sad(); busy = false;
   } else if (mood == "calm") {
-    anim_close();
+    if (random(2) == 0) { anim_close(); }
+    else { busy = true; drawFace_calm(); busy = false; }
+  } else if (mood == "tired") {
+    if (random(2) == 0) { anim_zzz(); }
+    else { anim_sleepy(); }
+  } else if (mood == "loving") {
+    if (random(2) == 0) { anim_heart(); }
+    else { busy = true; drawFace_loving(); busy = false; }
   } else if (mood == "curious") {
-    anim_look();
+    if (random(2) == 0) { busy = true; drawFace_curious(); busy = false; }
+    else { anim_look(); }
+  } else if (mood == "playful") {
+    uint8_t r = random(3);
+    if (r == 0) { anim_wink(); }
+    else if (r == 1) { busy = true; drawFace_smug(); busy = false; }
+    else { busy = true; drawFace_pitiful(); busy = false; }
   } else if (mood == "confused") {
     if (random(2) == 0) { busy = true; drawFace_wenhao(); busy = false; }
     else { anim_yun(); }
-  } else if (mood == "worried") {
-    busy = true; drawFace_gantanhao(); busy = false;
-  } else if (mood == "sad") {
+  } else if (mood == "awkward") {
+    if (random(2) == 0) { anim_ganga(); }
+    else { anim_dian(); }
+  } else if (mood == "angry") {
+    if (random(2) == 0) { busy = true; drawFace_angry(); busy = false; }
+    else { busy = true; drawFace_angry2(); busy = false; }
+  } else if (mood == "speechless") {
     busy = true; drawFace_wuyu(); busy = false;
   }
 }
@@ -1642,10 +1655,7 @@ canvas{width:100%;border-radius:8px;border:1.5px solid #38343a;
     <option value="">— Static Face —</option>
     <option value="face_wuyu">无语</option>
     <option value="face_wenhao">问号</option>
-    <option value="face_gantanhao">感叹号</option>
     <option value="face_angry">生气</option>
-    <option value="face_yes">对 √</option>
-    <option value="face_X">错 ×</option>
     <option value="face_glass">墨镜</option>
   </select>
   <select class="vsel" onchange="sendCmd(this.value); this.value=''">
@@ -1657,7 +1667,7 @@ canvas{width:100%;border-radius:8px;border:1.5px solid #38343a;
     <option value="anim_dian">等等</option>
     <option value="anim_smile">笑笑</option>
     <option value="anim_look">看你</option>
-    <option value="anim_hart">心跳</option>
+    <option value="anim_heart">心跳</option>
     <option value="anim_zzz">睡着了</option>
     <option value="anim_ganga">尴尬</option>
   </select>
@@ -2103,10 +2113,7 @@ void routeCmd() {
   // Static face commands (保持在 normal view)
   if (cmd == "face_wuyu") { busy = true; drawFace_wuyu(); currentView = VIEW_EYES_NORMAL; busy = false; }
   else if (cmd == "face_wenhao") { busy = true; drawFace_wenhao(); currentView = VIEW_EYES_NORMAL; busy = false; }
-  else if (cmd == "face_gantanhao") { busy = true; drawFace_gantanhao(); currentView = VIEW_EYES_NORMAL; busy = false; }
   else if (cmd == "face_angry") { busy = true; drawFace_angry(); currentView = VIEW_EYES_NORMAL; busy = false; }
-  else if (cmd == "face_yes") { busy = true; drawFace_yes(); currentView = VIEW_EYES_NORMAL; busy = false; }
-  else if (cmd == "face_X") { busy = true; drawFace_X(); currentView = VIEW_EYES_NORMAL; busy = false; }
   else if (cmd == "face_glass") { busy = true; drawFace_glass(); currentView = VIEW_EYES_NORMAL; busy = false; }
 
   // Animated face commands (已有 busy 机制)
@@ -2117,7 +2124,7 @@ void routeCmd() {
   else if (cmd == "anim_dian") anim_dian();
   else if (cmd == "anim_smile") anim_smile();
   else if (cmd == "anim_look") anim_look();
-  else if (cmd == "anim_hart") anim_hart();
+  else if (cmd == "anim_heart") anim_heart();
   else if (cmd == "anim_zzz") anim_zzz();
   else if (cmd == "anim_ganga") anim_ganga();
 }
@@ -2570,5 +2577,39 @@ void loop() {
     Serial.println("[debug][mood-timer] condition TRUE -> calling pollMochiMood()");
     lastMoodPoll = now;
     pollMochiMood();
+  }
+
+  // ── 闲时随机换脸：独立逻辑，不跟WiFi状态挂钩，每30秒挑一个 ──────
+  // 候选池 = anim_dead(彩蛋，不绑定任何mood标签) + 11个mood标签涉及的全部表情。
+  // 闲时池和mood池允许重叠，不是互斥关系。
+  static unsigned long lastIdleFace = 0;
+  if (!busy && !termMode && currentView == VIEW_EYES_NORMAL && now - lastIdleFace >= 30000) {
+    lastIdleFace = now;
+    uint8_t r = random(23);
+    switch (r) {
+      case 0: anim_dead(); break;
+      case 1: anim_smile(); break;
+      case 2: anim_jiyanjing(); break;
+      case 3: { busy = true; drawFace_glass(); busy = false; } break;
+      case 4: { busy = true; drawFace_sad(); busy = false; } break;
+      case 5: anim_close(); break;
+      case 6: { busy = true; drawFace_calm(); busy = false; } break;
+      case 7: anim_zzz(); break;
+      case 8: anim_sleepy(); break;
+      case 9: anim_heart(); break;
+      case 10: { busy = true; drawFace_loving(); busy = false; } break;
+      case 11: { busy = true; drawFace_curious(); busy = false; } break;
+      case 12: anim_look(); break;
+      case 13: anim_wink(); break;
+      case 14: { busy = true; drawFace_smug(); busy = false; } break;
+      case 15: { busy = true; drawFace_pitiful(); busy = false; } break;
+      case 16: { busy = true; drawFace_wenhao(); busy = false; } break;
+      case 17: anim_yun(); break;
+      case 18: anim_dian(); break;
+      case 19: anim_ganga(); break;
+      case 20: { busy = true; drawFace_angry(); busy = false; } break;
+      case 21: { busy = true; drawFace_angry2(); busy = false; } break;
+      case 22: { busy = true; drawFace_wuyu(); busy = false; } break;
+    }
   }
 }
